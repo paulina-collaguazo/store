@@ -1,3 +1,8 @@
+# Dependency and builds
+node_modules/
+dist/
+build/
+
 # Logs
 logs
 *.log
@@ -22,3 +27,19 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Cache and logs
+.cache/
+.npm/
+.yarn/
+.pnp.cjs
+.pnp.loader.mjs
+
+# Package and lockfiles 
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
