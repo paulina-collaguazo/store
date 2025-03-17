@@ -1,4 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react'
+import { Interface } from 'readline';
 
     
 interface Product  {
@@ -23,6 +24,7 @@ type Order = {
   totalProducts: number;
 
 }
+type SearchType  =  'TITLE' | 'CATEGORY' | 'TITLE_CATEGORY'
 
 type ProductContextType = {
   count: number;
@@ -39,6 +41,11 @@ type ProductContextType = {
 
   products: Product[];
   setProducts: (value: Product[]) => void;
+  loading: boolean;
+
+
+  error: string;
+
   
   selectedProduct: Product | undefined;
   setSelectedProduct: (value: Product) => void;
@@ -54,17 +61,11 @@ type ProductContextType = {
   filteredProducts: Product[];
   setFilteredProducts: (value: Product[]) => void
 
-  searchByCategory: string;
+  searchByCategory: string | null;
   setSearchByCategory: (value: string) => void;
 
-  // filteredProductsByTitle:(products: Product[], searchByTitle: string)=> Product[] 
-
-  myOrder: Order[]
-  setMyOrder: (value: Order[]) => void
-
-  // filteredProductByCategory: (products: Product[], searchByCategory: string) => Product[]
-
-  // filterBy: (searchType: string, products: Product[], searchByTitle: string, searchByCategory: string) => Product[]
+  myOrder: Order[];
+  setMyOrder: (value: Order[]) => void;
 
 
 }
@@ -105,6 +106,8 @@ export const ShoppingCartProvider = ({ children }: {children: React.ReactNode}) 
 
   //Get API products 
   const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState<boolean>(true)
+  const [error, setError] = useState<string>('')
 
   //Search product by title
   const [searchByTitle, setSearchByTitle] = useState<string>('');
@@ -116,12 +119,22 @@ export const ShoppingCartProvider = ({ children }: {children: React.ReactNode}) 
   const [searchByCategory, setSearchByCategory] = useState<string>('');
 
   useEffect(() => {
+    setLoading(true)
+    setError('')
     fetch("https://api.escuelajs.co/api/v1/products")
-      .then((response) => response.json())
+      .then((response) => {
+        if(!response) {
+          throw new Error('Error loading products')
+        }
+        return response.json() as Promise<Product[]>})
       .then((data) => {
         setProducts(data);
-        // setFilteredProducts(data)
-      });
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err.message)
+        setLoading(false)
+      })
   }, []);
 
 
@@ -143,7 +156,7 @@ export const ShoppingCartProvider = ({ children }: {children: React.ReactNode}) 
   };
 
 
-  const filterBy = (searchType: string, products: Product[], searchByTitle: string, searchByCategory: string): Product[] => {
+  const filterBy = (searchType: SearchType, products: Product[], searchByTitle: string, searchByCategory: string): Product[] => {
     if(searchType === 'TITLE'){
         return filteredProductsByTitle(products, searchByTitle)
     }
@@ -169,8 +182,7 @@ export const ShoppingCartProvider = ({ children }: {children: React.ReactNode}) 
       setFilteredProducts(filterBy('TITLE', products, searchByTitle, searchByCategory));
     if (!searchByTitle && searchByCategory) 
       setFilteredProducts(filterBy('CATEGORY',products, searchByTitle, searchByCategory));
-    if (!searchByTitle && !searchByCategory) 
-        setFilteredProducts(filterBy('', products, searchByTitle, searchByCategory));
+    
 
   }, [products, searchByTitle, searchByCategory]);
 
@@ -199,6 +211,10 @@ export const ShoppingCartProvider = ({ children }: {children: React.ReactNode}) 
    
         products,
         setProducts,
+        loading,
+     
+        error,
+        
         filteredProducts,
         setFilteredProducts,
         searchByTitle,
