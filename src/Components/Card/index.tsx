@@ -1,24 +1,22 @@
 
+import React from "react";
 import { PlusIcon, CheckIcon } from "@heroicons/react/16/solid";
 import { useShoppingContext, Product } from "../../Context";
-import React from "react";
 
 interface CardProps {
     product: Product
 }
 
 const Card = ( {product} : CardProps)=> {
-  // debugger
+  
   const context = useShoppingContext();
  
-  let urlImage = product.images[0].replace('["', "").replace('"]', "");
+  let imageUrl = product.images[0].replace('["', "").replace('"]', "");
 
-//   const context = useContext(ShoppingCartContext) as ProductContextType;
-
-  if (urlImage.search("placeimg") >= 0) {
-    urlImage = product.category.image;
-  } else if (urlImage.search("pravatar") >= 0) {
-    urlImage = urlImage.replace("pravatar", "i.pravatar");
+  if (imageUrl.search("placeimg") >= 0) {
+    imageUrl = product.category.image;
+  } else if (imageUrl.search("pravatar") >= 0) {
+    imageUrl = imageUrl.replace("pravatar", "i.pravatar");
   }
 
   const showProduct = (productDetail: Product) => {
@@ -64,7 +62,6 @@ const Card = ( {product} : CardProps)=> {
   return (
     <div
       className="bg-white cursor-pointer w-56 h-60 rounded-lg"
-      // onClick={()=> context.isProductDetailOpen ? context.closeProductDetail() : context.openProductDetail(item.item)}
       onClick={() => showProduct(product)}
     >
       <figure className="relative mb-2 w-full h-4/5">
@@ -74,7 +71,7 @@ const Card = ( {product} : CardProps)=> {
 
         <img
           className="w-full h-full object-cover rounded-lg"
-          src={urlImage}
+          src={imageUrl}
           alt="headphones"
         />
 

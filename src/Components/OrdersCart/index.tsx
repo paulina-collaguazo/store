@@ -1,15 +1,17 @@
 import { CalendarDaysIcon } from '@heroicons/react/16/solid'
+import { useShoppingContext, Order } from '../../Context'
 
-import { useContext } from 'react'
-import { ShoppingCartContext } from '../../Context'
+interface OrderProps {
+    order: Order;
+}
 
-const OrdersCart = props => {
+const OrdersCart = ({ order }: OrderProps ) => {
 
-    const context = useContext(ShoppingCartContext)
-    const {  totalPriceProducts, totalProducts } = props
-
-    let currentDate = context.formatDate
+    // const context = useShoppingContext()
+    const { date, totalPriceProducts, totalProducts } = order
     
+    
+    const formattedDate = new Date(date).toLocaleDateString("es-ES");
 
     return (
         <div className="flex justify-between items-center mb-3  w-120 border-2 border-dotted  p-4 rounded-2xl">
@@ -17,7 +19,7 @@ const OrdersCart = props => {
             <div className='flex justify-between w-full'>
                 <p className='flex flex-col'>
                     <CalendarDaysIcon className='size-8 text-black-500'/>
-                    <span className='text-2xl'>{currentDate}</span>
+                    <span className='text-2xl'>{formattedDate}</span>
                 </p>
                 <span className='font-medium text-sky-500'>Articles: {totalProducts}</span>
             
